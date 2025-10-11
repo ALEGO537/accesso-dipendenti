@@ -7,7 +7,7 @@
     // Coordinate del luogo di lavoro (Dental Class)
     const workLat = 45.58228;   // latitudine
     const workLon = 10.52226;   // longitudine
-    const maxDistance = 0.05;   // raggio consentito in km (50 metri)
+    const maxDistance = 0.05;   // raggio in km (50 metri)
 
     // Calcola la distanza in km tra due coordinate GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
@@ -28,9 +28,8 @@
              .test(navigator.userAgent);
     }
 
-    // Reindirizza al Google Form con i dati e la posizione
+    // Reindirizza al Google Form con posizione e dati
     function redirectWithLocation(lat, lon) {
-      // Componi il valore del campo "Azienda" con nome e coordinate GPS
       const aziendaVal = encodeURIComponent("Dental Class - " + lat.toFixed(5) + "," + lon.toFixed(5));
 
       const formURL =
@@ -38,12 +37,12 @@
         + "?usp=pp_url"
         + "&entry.1442131990=Cristina+Pozzi" // nome
         + "&entry.1644042605=cristinapozzi.pr@gmail.com" // email
-        + "&entry.1650758087=" + aziendaVal; // azienda + posizione
+        + "&entry.1650758087=" + aziendaVal; // azienda + posizione GPS
 
       window.location.href = formURL;
     }
 
-    // Quando la pagina viene caricata
+    // Esecuzione principale
     window.onload = function () {
       if (!isMobileDevice()) {
         document.body.innerHTML = "<h2>Accesso consentito solo da dispositivi mobili.</h2>";
