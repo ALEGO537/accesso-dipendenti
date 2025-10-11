@@ -2,16 +2,16 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Accesso modulo dipendenti</title>
+  <title>Accesso modulo dipendenti - Cristina Pozzi</title>
   <script>
-    // Coordinate del luogo di lavoro
-    const workLat = 45.58228;
-    const workLon = 10.52226;
-    const maxDistance = 0.05; // 50 metri
+    // Coordinate del luogo di lavoro (Dental Class)
+    const workLat = 45.58228;   // latitudine
+    const workLon = 10.52226;   // longitudine
+    const maxDistance = 0.05;   // raggio consentito in km (50 metri)
 
-    // Calcola distanza in km
+    // Calcola la distanza in km tra due coordinate GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
-      const R = 6371;
+      const R = 6371; // Raggio terrestre in km
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a =
@@ -22,25 +22,28 @@
       return R * c;
     }
 
+    // Controlla se è un dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
              .test(navigator.userAgent);
     }
 
+    // Reindirizza al Google Form con i dati e la posizione
     function redirectWithLocation(lat, lon) {
-      // Costruzione del link con posizione incorporata nel campo "Azienda"
+      // Componi il valore del campo "Azienda" con nome e coordinate GPS
       const aziendaVal = encodeURIComponent("Dental Class - " + lat.toFixed(5) + "," + lon.toFixed(5));
 
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform"
         + "?usp=pp_url"
-        + "&entry.1650758087=" + aziendaVal  // Azienda + posizione
-        + "&entry.1442131990=Cristina+Pozzi" // Nome
-        + "&entry.1644042605=cristinapozzi.pr@gmail.com"; // Email
+        + "&entry.1442131990=Cristina+Pozzi" // nome
+        + "&entry.1644042605=cristinapozzi.pr@gmail.com" // email
+        + "&entry.1650758087=" + aziendaVal; // azienda + posizione
 
       window.location.href = formURL;
     }
 
+    // Quando la pagina viene caricata
     window.onload = function () {
       if (!isMobileDevice()) {
         document.body.innerHTML = "<h2>Accesso consentito solo da dispositivi mobili.</h2>";
