@@ -4,23 +4,60 @@
   <meta charset="UTF-8">
   <title>Accesso modulo dipendenti</title>
   <script>
+    // Coordinate del luogo di lavoro
+    const workLat = 45.58228;  // latitudine
+    const workLon = 10.52226;  // longitudine
+    const maxDistance = 0.05;  // raggio in km (50 metri)
+
+    // Funzione per calcolare la distanza in km tra due coordinate
+    function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
+      const R = 6371; // raggio terrestre in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // Riconosce se è un dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
              .test(navigator.userAgent);
     }
 
     window.onload = function () {
-      if (isMobileDevice()) {
-        // Se è dispositivo mobile, reindirizza al modulo Google
-        window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform?usp=pp_url&entry.1442131990=Cristina+Pozzi&entry.1644042605=cristinapozzi.pr@gmail.com";
-      } else {
-        // Se non è mobile, mostra messaggio
+      if (!isMobileDevice()) {
         document.body.innerHTML = "<h2>Accesso consentito solo da dispositivi mobili.</h2>";
+        return;
+      }
+
+      if (navigator.geolocation) {
+        document.body.innerHTML = "<p>Verifica della posizione in corso…</p>";
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const distance = getDistanceFromLatLon(lat, lon, workLat, workLon);
+
+          if (distance <= maxDistance) {
+            // ✅ Se nel raggio consentito, reindirizza al modulo
+            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform?usp=pp_url&entry.1442131990=Cristina+Pozzi&entry.1644042605=cristinapozzi.pr@gmail.com";
+          } else {
+            // 🚫 Fuori area
+            document.body.innerHTML = "<h2>Vidimazione consentita solo sul luogo di lavoro (entro 50 m).</h2>";
+          }
+        }, function (error) {
+          document.body.innerHTML = "<h2>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
+        });
+      } else {
+        document.body.innerHTML = "<h2>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
       }
     }
   </script>
 </head>
 <body>
-  <p>Verifico il dispositivo…</p>
+  <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
