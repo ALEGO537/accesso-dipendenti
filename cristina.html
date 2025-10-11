@@ -5,13 +5,13 @@
   <title>Accesso modulo dipendenti</title>
   <script>
     // Coordinate del luogo di lavoro
-    const workLat = 45.58228;  // latitudine
-    const workLon = 10.52226;  // longitudine
-    const maxDistance = 0.05;  // raggio in km (50 metri)
+    const workLat = 45.58228;
+    const workLon = 10.52226;
+    const maxDistance = 0.05; // 50 metri
 
-    // Funzione per calcolare la distanza in km tra due coordinate
+    // Calcola distanza in km
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
-      const R = 6371; // raggio terrestre in km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a =
@@ -22,10 +22,23 @@
       return R * c;
     }
 
-    // Riconosce se è un dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
              .test(navigator.userAgent);
+    }
+
+    function redirectWithLocation(lat, lon) {
+      // Costruzione del link con posizione incorporata nel campo "Azienda"
+      const aziendaVal = encodeURIComponent("Dental Class - " + lat.toFixed(5) + "," + lon.toFixed(5));
+
+      const formURL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform"
+        + "?usp=pp_url"
+        + "&entry.1650758087=" + aziendaVal  // Azienda + posizione
+        + "&entry.1442131990=Cristina+Pozzi" // Nome
+        + "&entry.1644042605=cristinapozzi.pr@gmail.com"; // Email
+
+      window.location.href = formURL;
     }
 
     window.onload = function () {
@@ -35,17 +48,15 @@
       }
 
       if (navigator.geolocation) {
-        document.body.innerHTML = "<p>Verifica della posizione in corso…</p>";
+        document.body.innerHTML = "<p>Verifico la posizione GPS…</p>";
         navigator.geolocation.getCurrentPosition(function (pos) {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          const distance = getDistanceFromLatLon(lat, lon, workLat, workLon);
+          const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
 
-          if (distance <= maxDistance) {
-            // ✅ Se nel raggio consentito, reindirizza al modulo
-            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform?usp=pp_url&entry.1442131990=Cristina+Pozzi&entry.1644042605=cristinapozzi.pr@gmail.com";
+          if (dist <= maxDistance) {
+            redirectWithLocation(lat, lon);
           } else {
-            // 🚫 Fuori area
             document.body.innerHTML = "<h2>Vidimazione consentita solo sul luogo di lavoro (entro 50 m).</h2>";
           }
         }, function (error) {
