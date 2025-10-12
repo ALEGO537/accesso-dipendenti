@@ -5,13 +5,13 @@
   <title>Accesso modulo dipendenti - Alessandro Gozio</title>
   <script>
     // Coordinate del luogo di lavoro (Dental Class)
-    const workLat = 45.58228;   // latitudine
-    const workLon = 10.52226;   // longitudine
-    const maxDistance = 0.01;   // raggio consentito in km (10 metri)
+    const workLat = 45.58228;
+    const workLon = 10.52226;
+    const maxDistance = 0.01; // 10 metri
 
     // Calcola la distanza tra due coordinate GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
-      const R = 6371; // Raggio terrestre in km
+      const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a =
@@ -19,7 +19,7 @@
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c; // distanza in km
+      return R * c;
     }
 
     // Rileva se è un dispositivo mobile
@@ -28,42 +28,10 @@
         .test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google personale di Alessandro Gozio
-    function redirectToForm() {
+    // Reindirizza al modulo Google personale di Alessandro con coordinate
+    function redirectToForm(lat, lon) {
+      const aziendaVal = encodeURIComponent(`DENTAL CLASS - ${lat.toFixed(5)}, ${lon.toFixed(5)}`);
       const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeapJDoW3SiqYH57QsaRFar4-yphnJa4UdjFM3PnMsWhNJAww/viewform?usp=pp_url&entry.583138309=Alessandro+Gozio&entry.2017447553=ale.go@libero.it&entry.978265047=DENTAL+CLASS";
-      window.location.href = formURL;
-    }
-
-    // Esecuzione principale
-    window.onload = function () {
-      if (!isMobileDevice()) {
-        document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
-        return;
-      }
-
-      if (navigator.geolocation) {
-        document.body.innerHTML = "<p>Verifico la posizione GPS…</p>";
-        navigator.geolocation.getCurrentPosition(function (pos) {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
-          const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
-
-          if (dist <= maxDistance) {
-            redirectToForm();
-          } else {
-            document.body.innerHTML = "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 10 metri).</h2>";
-          }
-        }, function (error) {
-          document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
-        });
-      } else {
-        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
-      }
-    };
-  </script>
-</head>
-<body>
-  <p>Verifico il dispositivo e la posizione…</p>
-</body>
-</html>
+        "https://docs.google.com/forms/d/e/1FAIpQLSeapJDoW3SiqYH57QsaRFar4-yphnJa4UdjFM3PnMsWhNJAww/viewform" +
+        "?usp=pp_url" +
+        "&entry
