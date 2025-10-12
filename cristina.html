@@ -28,7 +28,7 @@
         .test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google personale
+    // Reindirizza al modulo Google personale di Cristina Pozzi
     function redirectToForm() {
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform?usp=pp_url&entry.1442131990=Cristina+Pozzi&entry.1644042605=cristinapozzi.pr@gmail.com&entry.1650758087=DENTAL+CLASS";
@@ -50,3 +50,20 @@
           const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
 
           if (dist <= maxDistance) {
+            redirectToForm();
+          } else {
+            document.body.innerHTML = "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 10 metri).</h2>";
+          }
+        }, function (error) {
+          document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
+        });
+      } else {
+        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <p>Verifico il dispositivo e la posizione…</p>
+</body>
+</html>
