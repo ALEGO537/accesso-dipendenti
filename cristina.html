@@ -7,9 +7,9 @@
     // Coordinate del luogo di lavoro (Dental Class)
     const workLat = 45.58228;   // latitudine
     const workLon = 10.52226;   // longitudine
-    const maxDistance = 0.05;   // raggio in km (50 metri)
+    const maxDistance = 0.01;   // raggio consentito in km (10 metri)
 
-    // Calcola la distanza in km tra due coordinate GPS
+    // Calcola la distanza tra due coordinate GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
       const R = 6371; // Raggio terrestre in km
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -19,33 +19,26 @@
         Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
+      return R * c; // distanza in km
     }
 
-    // Controlla se è un dispositivo mobile
+    // Rileva se è un dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-             .test(navigator.userAgent);
+        .test(navigator.userAgent);
     }
 
-    // Reindirizza al Google Form con posizione e dati
-    function redirectWithLocation(lat, lon) {
-      const aziendaVal = encodeURIComponent("Dental Class - " + lat.toFixed(5) + "," + lon.toFixed(5));
-
+    // Reindirizza al modulo Google personale
+    function redirectToForm() {
       const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform"
-        + "?usp=pp_url"
-        + "&entry.1442131990=Cristina+Pozzi" // nome
-        + "&entry.1644042605=cristinapozzi.pr@gmail.com" // email
-        + "&entry.1650758087=" + aziendaVal; // azienda + posizione GPS
-
+        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform?usp=pp_url&entry.1442131990=Cristina+Pozzi&entry.1644042605=cristinapozzi.pr@gmail.com&entry.1650758087=DENTAL+CLASS";
       window.location.href = formURL;
     }
 
     // Esecuzione principale
     window.onload = function () {
       if (!isMobileDevice()) {
-        document.body.innerHTML = "<h2>Accesso consentito solo da dispositivi mobili.</h2>";
+        document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
         return;
       }
 
@@ -57,20 +50,3 @@
           const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
 
           if (dist <= maxDistance) {
-            redirectWithLocation(lat, lon);
-          } else {
-            document.body.innerHTML = "<h2>Vidimazione consentita solo sul luogo di lavoro (entro 50 m).</h2>";
-          }
-        }, function (error) {
-          document.body.innerHTML = "<h2>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
-        });
-      } else {
-        document.body.innerHTML = "<h2>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
-      }
-    }
-  </script>
-</head>
-<body>
-  <p>Verifico il dispositivo e la posizione…</p>
-</body>
-</html>
