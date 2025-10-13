@@ -63,4 +63,13 @@
         }, function () {
           document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
         });
-      } else
+      } else {
+        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
+      }
+    };
+  </script>
+</head>
+<body>
+  <p>Verifico il dispositivo e la posizione…</p>
+</body>
+</html>
