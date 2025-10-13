@@ -28,18 +28,20 @@
         .test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google personale di Alessandro
+    // Reindirizza al modulo Google con azienda + coordinate
     function redirectToForm(lat, lon) {
+      const aziendaVal = encodeURIComponent("DENTAL CLASS - " + lat.toFixed(5) + "," + lon.toFixed(5));
+
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeapJDoW3SiqYH57QsaRFar4-yphnJa4UdjFM3PnMsWhNJAww/viewform" +
         "?usp=pp_url" +
         "&entry.583138309=Alessandro+Gozio" +
         "&entry.2017447553=ale.go@libero.it" +
-        "&entry.978265047=DENTAL+CLASS";
+        "&entry.978265047=" + aziendaVal;
+
       window.location.href = formURL;
     }
 
-    // Esecuzione principale
     window.onload = function () {
       if (!isMobileDevice()) {
         document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
@@ -61,13 +63,4 @@
         }, function () {
           document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
         });
-      } else {
-        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
-      }
-    };
-  </script>
-</head>
-<body>
-  <p>Verifico il dispositivo e la posizione…</p>
-</body>
-</html>
+      } else
