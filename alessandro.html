@@ -2,11 +2,11 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Accesso modulo dipendenti - Alessandro Gozio</title>
+  <title>Accesso modulo dipendenti - Alessandro Astrelli</title>
   <script>
-    // Coordinate del luogo di lavoro (Dental Class)
-    const workLat = 45.58228;
-    const workLon = 10.52226;
+    // Coordinate del luogo di lavoro (Dental Class - posizione di Alessandro)
+    const workLat = 45.58232;
+    const workLon = 10.52216;
     const maxDistance = 0.01; // 10 metri
 
     // Calcolo distanza tra due coordinate GPS
@@ -32,11 +32,11 @@
     function redirectToForm(lat, lon) {
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
       const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeapJDoW3SiqYH57QsaRFar4-yphnJa4UdjFM3PnMsWhNJAww/viewform" +
+        "https://docs.google.com/forms/d/e/1FAIpQLSf6pdetC-uZ3RGYIl-lJlE69Gfo4BU98qSpXWCrWvCrnaORow/viewform" +
         "?usp=pp_url" +
-        "&entry.583138309=Alessandro+Gozio" +
-        "&entry.2017447553=ale.go@libero.it" +
-        "&entry.978265047=" + coordVal; // <-- campo 'Azienda' = coordinate GPS
+        "&entry.1442131990=Alessandro+Astrelli" +
+        "&entry.1644042605=aastrelli@icloud.com" +
+        "&entry.1650758087=" + coordVal; // <-- campo 'Azienda' = coordinate GPS
 
       window.location.href = formURL;
     }
