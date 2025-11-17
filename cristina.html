@@ -33,10 +33,23 @@
       // ⏱️ TIMESTAMP DI APERTURA
       const timestamp = new Date().toISOString();
 
-      // Coordinate GPS (campo visibile)
+      // Coordinate GPS (campo visibile del form)
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
-      // FORM URL
+      // 🔥 INVIO NASCOSTO del timestamp nel campo invisibile
+      const formData = new FormData();
+      formData.append("entry.1485992978", timestamp);
+
+      fetch(
+        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/formResponse",
+        {
+          method: "POST",
+          mode: "no-cors",
+          body: formData
+        }
+      );
+
+      // URL del modulo (campi visibili)
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
@@ -44,17 +57,11 @@
         "&entry.1644042605=cristinapozzi.pr@gmail.com" +
         "&entry.1650758087=" + coordVal;
 
-      // 🔥 INVIO NASCOSTO del timestamp nel campo invisibile
-      fetch(
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/formResponse" +
-        "?entry.1485992978=" + encodeURIComponent(timestamp),
-        { method: "POST", mode: "no-cors" }
-      );
-
-      // Redirect al modulo vero
+      // Redirect al modulo visibile
       window.location.href = formURL;
     }
 
+    // Al caricamento della pagina
     window.onload = function () {
       if (!isMobileDevice()) {
         document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
@@ -63,22 +70,28 @@
 
       if (navigator.geolocation) {
         document.body.innerHTML = "<p>Verifico la posizione GPS…</p>";
-        navigator.geolocation.getCurrentPosition(function (pos) {
-          const lat = pos.coords.latitude;
-          const lon = pos.coords.longitude;
+        navigator.geolocation.getCurrentPosition(
+          function (pos) {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
 
-          const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
+            const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
 
-          if (dist <= maxDistance) {
-            redirectToForm(lat, lon);
-          } else {
-            document.body.innerHTML = "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>";
+            if (dist <= maxDistance) {
+              redirectToForm(lat, lon);
+            } else {
+              document.body.innerHTML =
+                "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>";
+            }
+          },
+          function () {
+            document.body.innerHTML =
+              "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
           }
-        }, function () {
-          document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
-        });
+        );
       } else {
-        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
+        document.body.innerHTML =
+          "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
       }
     };
   </script>
