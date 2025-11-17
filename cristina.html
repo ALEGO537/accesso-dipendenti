@@ -37,19 +37,22 @@
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
       // 🔥 INVIO NASCOSTO del timestamp nel campo invisibile
+      const formURLbase = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/formResponse";
+
       const formData = new FormData();
-      formData.append("entry.1485992978", timestamp);
+      formData.append("entry.1485992978", timestamp); // campo invisibile
+      formData.append("fvv", "1");
+      formData.append("draftResponse", "[]");
+      formData.append("pageHistory", "0");
+      formData.append("fbzx", "1234567890"); // token fittizio
 
-      fetch(
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/formResponse",
-        {
-          method: "POST",
-          mode: "no-cors",
-          body: formData
-        }
-      );
+      fetch(formURLbase, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+      });
 
-      // URL del modulo (campi visibili)
+      // URL del modulo (campi compilati visibili)
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
