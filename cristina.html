@@ -27,10 +27,10 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google
-    async function redirectToForm(lat, lon) {
+    // Reindirizza al Google Form con timestamp di apertura
+    function redirectToForm(lat, lon) {
 
-      // ⏱️ ORA ITALIANA
+      // ⏱️ ORA ITALIANA (no UTC!)
       const now = new Date();
       const italianTimestamp =
         now.getFullYear() + "-" +
@@ -42,37 +42,17 @@
 
       const timestamp = encodeURIComponent(italianTimestamp);
 
-      // Coordinate GPS
+      // Coordinate GPS precompilate
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
-      // 🔵 INVIO DATI AL GOOGLE SHEET (TUA WEBAPP)
-      try {
-        await fetch("https://script.google.com/macros/s/AKfycbwXv_fjUxtS0Z5rhVkW0EbKtpRNdajr44BNXvQ0yqJVpK91-7eB7nHNArpsxyncRYD0jg/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            timestamp: italianTimestamp,
-            lat: lat.toFixed(5),
-            lon: lon.toFixed(5),
-            ip: ""
-          })
-        });
-
-        // Attendi 200 ms per garantire l'invio
-        await new Promise(r => setTimeout(r, 200));
-
-      } catch (e) {
-        console.log("Errore invio dati apertura:", e);
-      }
-
-      // URL del modulo Google (precompilato)
+      // URL precompilato del Google Form
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
-        "&entry.1442131990=Cristina+Pozzi" +                    
-        "&entry.1644042605=cristinapozzi.pr@gmail.com" +       
-        "&entry.1650758087=" + coordVal +                       
-        "&entry.1485992978=" + timestamp;
+        "&entry.1442131990=Cristina+Pozzi" +                     // Nome
+        "&entry.1644042605=cristinapozzi.pr@gmail.com" +        // Email
+        "&entry.1650758087=" + coordVal +                       // Coordinate GPS
+        "&entry.1224387632=" + timestamp;                       // ⭐ Orario di vidimazione (ora apertura modulo)
 
       // Redirect al modulo
       window.location.href = formURL;
