@@ -9,7 +9,6 @@
     const workLon = 10.52226;
     const maxDistance = 0.02; // 20 metri
 
-    // Calcolo distanza tra due coordinate GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -22,49 +21,27 @@
       return R * c;
     }
 
-    // Rileva se è un dispositivo mobile
     function isMobileDevice() {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google con coordinate + timestamp invisibile
     function redirectToForm(lat, lon) {
 
-      // ⏱️ TIMESTAMP DI APERTURA
-      const timestamp = new Date().toISOString();
-
-      // Coordinate GPS (campo visibile del form)
+      const timestamp = encodeURIComponent(new Date().toISOString());
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
-      // 🔥 INVIO NASCOSTO del timestamp nel campo invisibile
-      const formURLbase = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/formResponse";
-
-      const formData = new FormData();
-      formData.append("entry.1485992978", timestamp); // campo invisibile
-      formData.append("fvv", "1");
-      formData.append("draftResponse", "[]");
-      formData.append("pageHistory", "0");
-      formData.append("fbzx", "7929588700322096132"); // token reale del tuo form
-
-      fetch(formURLbase, {
-        method: "POST",
-        mode: "no-cors",
-        body: formData
-      });
-
-      // URL del modulo (campi compilati visibili)
+      // 👇 TIMESTAMP AGGIUNTO DIRETTAMENTE NELL’URL DEL FORM
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
         "&entry.1442131990=Cristina+Pozzi" +
         "&entry.1644042605=cristinapozzi.pr@gmail.com" +
-        "&entry.1650758087=" + coordVal;
+        "&entry.1650758087=" + coordVal +
+        "&entry.1485992978=" + timestamp;   // ⬅️ IL CAMPO INVISIBILE ORA VIENE COMPILATO QUI
 
-      // Redirect al modulo visibile
       window.location.href = formURL;
     }
 
-    // Al caricamento della pagina
     window.onload = function () {
       if (!isMobileDevice()) {
         document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
@@ -73,28 +50,21 @@
 
       if (navigator.geolocation) {
         document.body.innerHTML = "<p>Verifico la posizione GPS…</p>";
-        navigator.geolocation.getCurrentPosition(
-          function (pos) {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
 
-            const dist = getDistanceFromLatLon(lat, lon, workLat, workLon);
-
-            if (dist <= maxDistance) {
-              redirectToForm(lat, lon);
-            } else {
-              document.body.innerHTML =
-                "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>";
-            }
-          },
-          function () {
-            document.body.innerHTML =
-              "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
+          if (dist <= maxDistance) {
+            redirectToForm(lat, lon);
+          } else {
+            document.body.innerHTML = "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>";
           }
-        );
+        }, function () {
+          document.body.innerHTML = "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>";
+        });
       } else {
-        document.body.innerHTML =
-          "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
+        document.body.innerHTML = "<h2 style='color:red;'>Il tuo dispositivo non supporta la geolocalizzazione.</h2>";
       }
     };
   </script>
