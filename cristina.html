@@ -46,16 +46,16 @@
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
       // 🔵 INVIO DATI AL GOOGLE SHEET (TUA WEBAPP)
-      fetch("https://script.google.com/macros/s/AKfycbwXv_fjUxtS0Z5rhVkW0EbKtpRNdajr44BNXvQ0yqJVpK91-7eB7nHNArpsxyncRYD0jg/exec", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          timestamp: italianTimestamp,  // Ora apertura modulo
-          lat: lat.toFixed(5),          // Latitudine
-          lon: lon.toFixed(5),          // Longitudine
-          ip: ""                        // Puoi riempirlo in futuro
-        })
-      });
+    fetch("https://script.google.com/macros/s/AKfycbwXv_fjUxtS0Z5rhVkW0EbKtpRNdajr44BNXvQ0yqJVpK91-7eB7nHNArpsxyncRYD0jg/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    timestamp: italianTimestamp,
+    lat: lat.toFixed(5),
+    lon: lon.toFixed(5),
+    ip: ""
+  })
+});
 
       // URL del modulo Google (precompilato)
       const formURL =
@@ -113,3 +113,4 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
+
