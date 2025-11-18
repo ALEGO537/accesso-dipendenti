@@ -27,10 +27,10 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al Google Form con timestamp di apertura
+    // Reindirizza al Google Form con timestamp di apertura + carattere invisibile
     function redirectToForm(lat, lon) {
 
-      // ⏱️ ORA ITALIANA (no UTC!)
+      // ⏱️ ORA ITALIANA
       const now = new Date();
       const italianTimestamp =
         now.getFullYear() + "-" +
@@ -40,7 +40,13 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      const timestamp = encodeURIComponent(italianTimestamp);
+      // Carattere invisibile ZERO WIDTH SPACE
+      const secretChar = "\u200B";
+
+      // Timestamp con carattere invisibile
+      const protectedTimestamp = italianTimestamp + secretChar;
+
+      const encodedTimestamp = encodeURIComponent(protectedTimestamp);
 
       // Coordinate GPS precompilate
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
@@ -52,7 +58,7 @@
         "&entry.1442131990=Cristina+Pozzi" +                     // Nome
         "&entry.1644042605=cristinapozzi.pr@gmail.com" +        // Email
         "&entry.1650758087=" + coordVal +                       // Coordinate GPS
-        "&entry.1224387632=" + timestamp;                       // ⭐ Orario di vidimazione (ora apertura modulo)
+        "&entry.1224387632=" + encodedTimestamp;                // ⭐ Orario di vidimazione PROTETTO
 
       // Redirect al modulo
       window.location.href = formURL;
