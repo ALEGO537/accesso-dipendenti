@@ -41,13 +41,13 @@
         String(now.getSeconds()).padStart(2, '0');
 
       // ⭐ INVIO ORA DI APERTURA ALLO SCRIPT GOOGLE
-     fetch("https://script.google.com/macros/s/AKfycbxmQVn-ksIMmYdpghSypolbyUx-E66imkaMwqeFLSn6z6QQxuXYazqDzVgyVt5-gBWH/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbxmQVn-ksIMmYdpghSypolbyUx-E66imkaMwqeFLSn6z6QQxuXYazqDzVgyVt5-gBWH/exec", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    timestamp: oraApertura
+    timestamp: italianTimestamp
   })
 });
 
@@ -109,5 +109,6 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
+
 
 
