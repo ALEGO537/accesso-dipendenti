@@ -9,7 +9,7 @@
     const workLon = 10.52226;
     const maxDistance = 0.02; // 20 metri
 
-    // Calcolo distanza GPS
+    // Calcolo distanza GPS (formula Haversine)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -27,10 +27,10 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al Google Form con timestamp di apertura + carattere invisibile
+    // Reindirizza al Google Form + invio ora apertura a Apps Script
     function redirectToForm(lat, lon) {
 
-      // ⏱️ ORA ITALIANA
+      // ⏱️ ORA ITALIANA (no UTC)
       const now = new Date();
       const italianTimestamp =
         now.getFullYear() + "-" +
@@ -40,25 +40,28 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      // Carattere invisibile ZERO WIDTH SPACE
-      const secretChar = "\u200B";
+      // ⭐ INVIO ORA DI APERTURA ALLO SCRIPT GOOGLE
+      fetch("https://script.google.com/macros/s/AKfycbwXv_fjUxtS0Z5rhVkW0EbKtpRNdajr44BNXvQ0yqJVpK91-7eB7nHNArpsxyncRYD0jg/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timestamp: italianTimestamp, // ora apertura modulo
+          lat: lat.toFixed(5),
+          lon: lon.toFixed(5),
+          ip: ""
+        })
+      });
 
-      // Timestamp con carattere invisibile
-      const protectedTimestamp = italianTimestamp + secretChar;
-
-      const encodedTimestamp = encodeURIComponent(protectedTimestamp);
-
-      // Coordinate GPS precompilate
+      // Coordinate GPS da precompilare nel modulo Google
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
-      // URL precompilato del Google Form
+      // ⭐ URL del Google Form (pulito, senza timestamp)
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
-        "&entry.1442131990=Cristina+Pozzi" +                     // Nome
-        "&entry.1644042605=cristinapozzi.pr@gmail.com" +        // Email
-        "&entry.1650758087=" + coordVal +                       // Coordinate GPS
-        "&entry.1224387632=" + encodedTimestamp;                // ⭐ Orario di vidimazione PROTETTO
+        "&entry.1442131990=Cristina+Pozzi" +        // Nome
+        "&entry.1644042605=cristinapozzi.pr@gmail.com" + // Email
+        "&entry.1650758087=" + coordVal;            // Coordinate GPS
 
       // Redirect al modulo
       window.location.href = formURL;
