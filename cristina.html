@@ -41,16 +41,15 @@
         String(now.getSeconds()).padStart(2, '0');
 
       // ⭐ INVIO ORA DI APERTURA ALLO SCRIPT GOOGLE
-      fetch("https://script.google.com/macros/s/AKfycbwXv_fjUxtS0Z5rhVkW0EbKtpRNdajr44BNXvQ0yqJVpK91-7eB7nHNArpsxyncRYD0jg/exec", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          timestamp: italianTimestamp, // ora apertura modulo
-          lat: lat.toFixed(5),
-          lon: lon.toFixed(5),
-          ip: ""
-        })
-      });
+      fetch("https://script.google.com/macros/s/AKfycbxmQVn-ksIMmYdpghSypolbyUx-E66imkaMwqeFLSn6z6QQxuXYazqDzVgyVt5-gBWH/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    timestamp: oraApertura
+  })
+});
 
       // Coordinate GPS da precompilare nel modulo Google
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
@@ -110,3 +109,4 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
+
