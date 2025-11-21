@@ -42,7 +42,8 @@
         String(now.getSeconds()).padStart(2, '0');
 
       // INVIO ORA DI APERTURA ALLA WEBAPP (salva nel foglio)
-      fetch("URL_DELLA_WEBAPP", {
+      fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec
+", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -115,3 +116,4 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
+
