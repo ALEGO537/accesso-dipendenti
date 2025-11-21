@@ -41,7 +41,7 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      // COSTRUISCO SUBITO IL LINK DI REDIRECT
+      // LINK DEL MODULO
       const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
       const timestampVal = encodeURIComponent(italianTimestamp);
 
@@ -53,7 +53,7 @@
         "&entry.1650758087=" + coordVal +
         "&entry.1485992978=" + timestampVal;
 
-      // INVIO ORA DI APERTURA ALLA WEBAPP (NO CORS PREFLIGHT)
+      // INVIO ORA DI APERTURA ALLA WEBAPP
       fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec", {
         method: "POST",
         body: JSON.stringify({ timeOpened: italianTimestamp })
@@ -62,8 +62,7 @@
         window.location.href = formURL;
       });
 
-    }  // ← QUESTA PARENTESI TI MANCAVA!!!
-
+    }  // ← chiude redirectToForm
 
     // Al caricamento della pagina
     window.onload = function () {
