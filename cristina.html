@@ -54,16 +54,16 @@
         "&entry.1485992978=" + timestampVal;
 
       // INVIO ORA DI APERTURA ALLA WEBAPP (NO CORS PREFLIGHT)
-fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec", {
-  method: "POST",
-  body: JSON.stringify({ timeOpened: italianTimestamp })
-})
-.then(() => {
-  window.location.href = formURL;
-})
-.catch(() => {
-  window.location.href = formURL;
-});
+      fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec", {
+        method: "POST",
+        body: JSON.stringify({ timeOpened: italianTimestamp })
+      })
+      .finally(() => {
+        window.location.href = formURL;
+      });
+
+    }  // ← QUESTA PARENTESI TI MANCAVA!!!
+
 
     // Al caricamento della pagina
     window.onload = function () {
@@ -109,4 +109,3 @@ fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKzi
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
-
