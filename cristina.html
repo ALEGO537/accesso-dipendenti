@@ -41,33 +41,31 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      // INVIO ORA DI APERTURA ALLA WEBAPP (salva nel foglio)
+      // COSTRUISCO SUBITO IL LINK DI REDIRECT
+      const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
+      const timestampVal = encodeURIComponent(italianTimestamp);
+
+      const formURL =
+        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
+        "?usp=pp_url" +
+        "&entry.1442131990=Cristina+Pozzi" +
+        "&entry.1644042605=cristinapozzi.pr@gmail.com" +
+        "&entry.1650758087=" + coordVal +
+        "&entry.1485992978=" + timestampVal;
+
+      // INVIO ORA DI APERTURA ALLA WEBAPP
       fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          timeOpened: italianTimestamp,
-          gps: lat.toFixed(5) + ", " + lon.toFixed(5),
-          user: "Cristina Pozzi",
-          email: "cristinapozzi.pr@gmail.com"
+          timeOpened: italianTimestamp
         })
-      }).finally(() => {
-
-        // COORDINATE PER IL FORM
-        const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
-        const timestampVal = encodeURIComponent(italianTimestamp);
-
-        // URL DEL MODULO GOOGLE (come avevi prima)
-        const formURL =
-          "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
-          "?usp=pp_url" +
-          "&entry.1442131990=Cristina+Pozzi" +                 // Nome
-          "&entry.1644042605=cristinapozzi.pr@gmail.com" +     // Email
-          "&entry.1650758087=" + coordVal +                    // Azienda (coordinate GPS)
-          "&entry.1485992978=" + timestampVal;                 // Ora apertura
-
-        // REDIRECT AL MODULO
-        window.location.href = formURL;
+      })
+      .then(() => {
+        window.location.href = formURL;   // redirect sicuro
+      })
+      .catch(() => {
+        window.location.href = formURL;   // redirect anche se fallisce
       });
     }
 
@@ -115,6 +113,3 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
-
-
-
