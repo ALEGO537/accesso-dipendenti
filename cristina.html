@@ -53,12 +53,15 @@
         "&entry.1650758087=" + coordVal +
         "&entry.1485992978=" + timestampVal;
 
-      // INVIO ORA DI APERTURA ALLA WEBAPP
+      // INVIO ORA DI APERTURA ALLA WEBAPP (FATTO BENE)
       fetch("https://script.google.com/macros/s/AKfycbzWlbsuO59I62XyDblwC6orSyLpNfrKziFW2U3XZS14ez1ObM8ZeVhnsCBbgAk9Zk1GIQ/exec", {
         method: "POST",
         body: JSON.stringify({ timeOpened: italianTimestamp })
       })
-      .finally(() => {
+      .then(() => {
+        window.location.href = formURL;
+      })
+      .catch(() => {
         window.location.href = formURL;
       });
 
