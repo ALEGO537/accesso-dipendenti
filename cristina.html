@@ -9,7 +9,7 @@
     const workLon = 10.52226;
     const maxDistance = 0.02; // 20 metri
 
-    // Calcolo distanza GPS (formula Haversine)
+    // Calcolo distanza GPS
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -27,10 +27,10 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al Google Form + invio ora apertura a Apps Script
+    // Reindirizza al modulo Google
     function redirectToForm(lat, lon) {
 
-      // ⏱️ ORA ITALIANA (no UTC)
+      // ⏱️ ORA ITALIANA (no UTC!)
       const now = new Date();
       const italianTimestamp =
         now.getFullYear() + "-" +
@@ -40,29 +40,21 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      // ⭐ INVIO ORA DI APERTURA ALLO SCRIPT GOOGLE
-    fetch("https://script.google.com/macros/s/AKfycbzogusuxutJndE0HOdxtvjxsKAvBHvnzoGkgVd_sHMzWDxsYxQAqsOs9y6SPYqrS8lBUA/exec", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    timestamp: italianTimestamp
-  })
-});
+      const timestamp = encodeURIComponent(italianTimestamp);
 
-      // Coordinate GPS da precompilare nel modulo Google
+      // Coordinate GPS
       const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
 
-      // ⭐ URL del Google Form (pulito, senza timestamp)
+      // URL del modulo Google (precompilato)
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
         "?usp=pp_url" +
         "&entry.1442131990=Cristina+Pozzi" +        // Nome
         "&entry.1644042605=cristinapozzi.pr@gmail.com" + // Email
-        "&entry.1650758087=" + coordVal;            // Coordinate GPS
+        "&entry.1650758087=" + coordVal +           // Azienda (coordinate GPS)
+        "&entry.1485992978=" + timestamp;           // Ora apertura (invisibile)
 
-      // Redirect al modulo
+      // Redirect
       window.location.href = formURL;
     }
 
@@ -109,11 +101,3 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
-
-
-
-
-
-
-
-
