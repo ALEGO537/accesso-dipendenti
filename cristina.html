@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Accesso modulo dipendenti - Cristina Pozzi</title>
+
   <script>
     // Coordinate del luogo di lavoro (Dental Class)
     const workLat = 45.58228;
@@ -27,10 +28,10 @@
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 
-    // Reindirizza al modulo Google
+    // REGISTRAZIONE ORA DI APERTURA + REDIRECT AL MODULO
     function redirectToForm(lat, lon) {
 
-      // ⏱️ ORA ITALIANA (no UTC!)
+      // ⏱️ ORA ITALIANA
       const now = new Date();
       const italianTimestamp =
         now.getFullYear() + "-" +
@@ -40,29 +41,42 @@
         String(now.getMinutes()).padStart(2, '0') + ":" +
         String(now.getSeconds()).padStart(2, '0');
 
-      const timestamp = encodeURIComponent(italianTimestamp);
+      // INVIO ORA DI APERTURA ALLA WEBAPP (salva nel foglio)
+      fetch("URL_DELLA_WEBAPP", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timeOpened: italianTimestamp,
+          gps: lat.toFixed(5) + ", " + lon.toFixed(5),
+          user: "Cristina Pozzi",
+          email: "cristinapozzi.pr@gmail.com"
+        })
+      }).finally(() => {
 
-      // Coordinate GPS
-      const coordVal = encodeURIComponent(`${lat.toFixed(5)}, ${lon.toFixed(5)}`);
+        // COORDINATE PER IL FORM
+        const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
+        const timestampVal = encodeURIComponent(italianTimestamp);
 
-      // URL del modulo Google (precompilato)
-      const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
-        "?usp=pp_url" +
-        "&entry.1442131990=Cristina+Pozzi" +        // Nome
-        "&entry.1644042605=cristinapozzi.pr@gmail.com" + // Email
-        "&entry.1650758087=" + coordVal +           // Azienda (coordinate GPS)
-        "&entry.1485992978=" + timestamp;           // Ora apertura (invisibile)
+        // URL DEL MODULO GOOGLE (come avevi prima)
+        const formURL =
+          "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
+          "?usp=pp_url" +
+          "&entry.1442131990=Cristina+Pozzi" +                 // Nome
+          "&entry.1644042605=cristinapozzi.pr@gmail.com" +     // Email
+          "&entry.1650758087=" + coordVal +                    // Azienda (coordinate GPS)
+          "&entry.1485992978=" + timestampVal;                 // Ora apertura
 
-      // Redirect
-      window.location.href = formURL;
+        // REDIRECT AL MODULO
+        window.location.href = formURL;
+      });
     }
 
     // Al caricamento della pagina
     window.onload = function () {
 
       if (!isMobileDevice()) {
-        document.body.innerHTML = "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
+        document.body.innerHTML =
+          "<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>";
         return;
       }
 
