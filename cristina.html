@@ -5,7 +5,7 @@
   <title>Accesso modulo dipendenti - Cristina Pozzi</title>
 
   <script>
-    // ✅ URL WEBAPP TOKEN (ULTIMO CORRETTO)
+    // ✅ URL WEBAPP TOKEN (CORRETTO)
     const TOKEN_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyeBvGpkYBBctML4iZjsvSYJP2Tas8RgiOwh7LDW4fjRZlcLwrrcZIfl4BbObV721HKcA/exec";
 
     // ✅ Campo TOKEN del Google Form
@@ -18,8 +18,8 @@
     // ✅ Raggio 15 metri = 0.015 km
     const maxDistance = 0.015;
 
-    // ✅ Accuracy massima accettata 10 metri
-    const maxAccuracyMeters = 10;
+    // ✅ Accuracy massima accettata 15 metri
+    const maxAccuracyMeters = 15;
 
     // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
@@ -100,7 +100,7 @@
           const lon = pos.coords.longitude;
           const accuracy = pos.coords.accuracy; // metri
 
-          // ✅ blocco se accuracy > 10m
+          // ✅ blocco se accuracy > 15m
           if (typeof accuracy === "number" && accuracy > maxAccuracyMeters) {
             showError(
               "<h2 style='color:red;'>Posizione troppo imprecisa (" + Math.round(accuracy) + " m).</h2>" +
