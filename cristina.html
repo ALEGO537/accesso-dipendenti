@@ -5,17 +5,20 @@
   <title>Accesso modulo dipendenti - Cristina Pozzi</title>
 
   <script>
+    // === URL WEBAPP (TOKEN) ===
+    const TOKEN_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyeBvGpkYBBctML4iZjsvSYJP2Tas8RgiOwh7LDW4fjRZlcLwrrcZIfl4BbObV721HKcA/exec";
+
+    // Campo TOKEN del tuo Google Form (da link che mi hai dato)
+    const TOKEN_ENTRY_ID = "1948388486";
+
     // Coordinate del luogo di lavoro (Dental Class)
     const workLat = 45.58228;
     const workLon = 10.52226;
+    const maxDistance = 0.02; // 20 metri (in km)
 
-    // 20 metri (in km)
-    const maxDistance = 0.02;
-
-    // Blocca se precisione GPS peggiore di 15 metri
+    // Accuracy massima accettata (metri)
     const maxAccuracyMeters = 15;
 
-    // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -28,7 +31,6 @@
       return R * c;
     }
 
-    // Controllo dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
@@ -39,21 +41,30 @@
         "<p><button onclick='location.reload()' style='padding:10px 14px;font-size:16px;'>Riprova</button></p>";
     }
 
-    // REGISTRAZIONE ORA DI APERTURA + REDIRECT AL MODULO
-    function redirectToForm(lat, lon) {
-
-      // ⏱️ ORA ITALIANA
+    function makeItalianTimestamp() {
       const now = new Date();
-      const italianTimestamp =
+      return (
         now.getFullYear() + "-" +
         String(now.getMonth() + 1).padStart(2, '0') + "-" +
         String(now.getDate()).padStart(2, '0') + " " +
         String(now.getHours()).padStart(2, '0') + ":" +
         String(now.getMinutes()).padStart(2, '0') + ":" +
-        String(now.getSeconds()).padStart(2, '0');
+        String(now.getSeconds()).padStart(2, '0')
+      );
+    }
 
+    // Richiede token alla WebApp (POST) — ritorna { ok:true, token: "...", expiresAt: "..." }
+    function requestToken(name, email, page) {
+      return fetch(TOKEN_WEBAPP_URL, {
+        method: "POST",
+        body: JSON.stringify({ name, email, page })
+      }).then(r => r.json());
+    }
+
+    function openForm(lat, lon, italianTimestamp, token) {
       const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
       const timestampVal = encodeURIComponent(italianTimestamp);
+      const tokenVal = encodeURIComponent(token);
 
       const formURL =
         "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
@@ -61,20 +72,13 @@
         "&entry.1442131990=Cristina+Pozzi" +
         "&entry.1644042605=cristinapozzi.pr@gmail.com" +
         "&entry.1650758087=" + coordVal +
-        "&entry.1485992978=" + timestampVal;
+        "&entry.1485992978=" + timestampVal +
+        "&entry." + TOKEN_ENTRY_ID + "=" + tokenVal;
 
-      // INVIO ORA DI APERTURA ALLA WEBAPP
-      fetch("https://script.google.com/macros/s/AKfycbz51pBjM6ID-8g59NPHMDb9ocZRO4DS6hlKslnq3vXt-iFw5iX_zyYcocLh7OSX4o51PA/exec", {
-        method: "POST",
-        body: JSON.stringify({ timeOpened: italianTimestamp })
-      })
-      .then(() => window.location.href = formURL)
-      .catch(() => window.location.href = formURL);
+      window.location.href = formURL;
     }
 
-    // Al caricamento della pagina
     window.onload = function () {
-
       if (!isMobileDevice()) {
         showError("<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>");
         return;
@@ -91,9 +95,9 @@
         function (pos) {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          const accuracy = pos.coords.accuracy; // metri
+          const accuracy = pos.coords.accuracy;
 
-          // ✅ blocca se precisione troppo bassa (accuracy alta)
+          // check accuracy
           if (typeof accuracy === "number" && accuracy > maxAccuracyMeters) {
             showError(
               "<h2 style='color:red;'>Posizione troppo imprecisa (" + Math.round(accuracy) + " m).</h2>" +
@@ -103,27 +107,39 @@
           }
 
           const distKm = getDistanceFromLatLon(lat, lon, workLat, workLon);
-          const distMeters = Math.round(distKm * 1000);
 
-          if (distKm <= maxDistance) {
-            redirectToForm(lat, lon);
-          } else {
+          if (distKm > maxDistance) {
             showError(
               "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>" +
-              "<p>Distanza stimata: <b>" + distMeters + " m</b></p>" +
-              "<p>Precisione GPS: <b>" + Math.round(accuracy) + " m</b></p>"
+              "<p>Distanza stimata: <b>" + Math.round(distKm*1000) + " m</b></p>" +
+              "<p>Precisione: <b>" + Math.round(accuracy) + " m</b></p>"
             );
+            return;
           }
+
+          // Sei passato dal controllo locale: chiedi token alla WebApp
+          const italianTimestamp = makeItalianTimestamp();
+
+          requestToken("Cristina Pozzi", "cristinapozzi.pr@gmail.com", "cristina")
+            .then(res => {
+              if (!res || !res.ok || !res.token) {
+                showError("<h2 style='color:red;'>Accesso negato: token non disponibile.</h2><p>Riprova.</p>");
+                return;
+              }
+              openForm(lat, lon, italianTimestamp, res.token);
+            })
+            .catch(() => {
+              showError("<h2 style='color:red;'>Errore di connessione (token).</h2><p>Riprova.</p>");
+            });
+
         },
         function () {
-          showError(
-            "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>"
-          );
+          showError("<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>");
         },
         {
           enableHighAccuracy: true,
           timeout: 15000,
-          maximumAge: 0 // ✅ niente posizione “cached”
+          maximumAge: 0
         }
       );
     };
@@ -131,6 +147,6 @@
 </head>
 
 <body>
-  <p>Verifico il dispositivo e la posizione…</p>
+  <p>Verifico la posizione e preparo il modulo…</p>
 </body>
 </html>
