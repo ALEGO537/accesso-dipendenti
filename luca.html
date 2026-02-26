@@ -1,30 +1,19 @@
-link form 
-https://docs.google.com/forms/d/e/1FAIpQLSf8-tKXqQ6KZL4bVnJXsaD0dZ4HR2JrnqE_3H9O0gjWyPyoWg/viewform?usp=pp_url&entry.780655846=TEST
-
-url
-https://script.google.com/macros/s/AKfycbxX9jXGMh_lmgUGeS2mWP7JXgHVleLxCh0gjXyn_e2OczmbdQLqW-MTmh1S91FxgAiw/exec
-
-workLat = 45.58232;
-workLon = 10.52216;
-mail luca.bartoleni@gmail.com
-
-file da modificare 
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Accesso modulo dipendenti - Cristina Pozzi</title>
+  <title>Accesso modulo dipendenti - Luca Bartoleni</title>
 
   <script>
-    // ✅ URL WebApp TOKEN (Apps Script)
-    const TOKEN_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbym36zEkEVAmTztmGhp_3ynvgFKY6SqDL7hAOOY_0PO0x55W8sh2Ulv9q-I5SGVd2fQ/exec";
+    // ✅ URL WebApp TOKEN (Apps Script) - Luca
+    const TOKEN_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxzOiEniNn1vHgWBYWVkdTSBwh5m5XP6q0ZrqOOaXBsLpgpNugzgsptvSZbBRyk9hRQ/exec";
 
-    // ✅ Campo TOKEN del Google Form
-    const TOKEN_ENTRY_ID = "1948388486";
+    // ✅ Campo TOKEN del Google Form di Luca (da link con TEST)
+    const TOKEN_ENTRY_ID = "780655846";
 
-    // Coordinate della postazione (Cristina)
-    const workLat = 45.58228;
-    const workLon = 10.52226;
+    // Coordinate della postazione (Luca)
+    const workLat = 45.58232;
+    const workLon = 10.52216;
     const maxDistance = 0.02; // 20 metri (in km)
 
     // ✅ blocco se precisione GPS peggiore di 15m
@@ -81,10 +70,10 @@ file da modificare
       const tokenVal = encodeURIComponent(token);
 
       const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
+        "https://docs.google.com/forms/d/e/1FAIpQLSf8-tKXqQ6KZL4bVnJXsaD0dZ4HR2JrnqE_3H9O0gjWyPyoWg/viewform" +
         "?usp=pp_url" +
-        "&entry.1442131990=Cristina+Pozzi" +
-        "&entry.1644042605=cristinapozzi.pr@gmail.com" +
+        "&entry.1442131990=Luca+Bartoleni" +
+        "&entry.1644042605=luca.bartoleni@gmail.com" +
         "&entry.1650758087=" + coordVal +
         "&entry.1485992978=" + timestampVal +
         "&entry." + TOKEN_ENTRY_ID + "=" + tokenVal;
@@ -136,7 +125,7 @@ file da modificare
           // ✅ passed: genera token e apre il form
           const italianTimestamp = makeItalianTimestamp();
 
-          requestToken("Cristina Pozzi", "cristinapozzi.pr@gmail.com", "cristina")
+          requestToken("Luca Bartoleni", "luca.bartoleni@gmail.com", "luca")
             .then(res => {
               if (!res || !res.ok || !res.token) {
                 showError("<h2 style='color:red;'>Accesso negato: token non disponibile.</h2><p>Riprova.</p>");
