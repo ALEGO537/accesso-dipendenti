@@ -12,8 +12,8 @@
     const TOKEN_ENTRY_ID = "841557572";
 
     // Coordinate della postazione (Gillian)
-    const workLat = 45.58231;
-    const workLon = 10.52236;
+    const workLat = 45.582405;
+    const workLon = 10.522792;
     const maxDistance = 0.03; // 30 metri (in km)
 
     // ✅ blocco se precisione GPS peggiore di 20m
@@ -115,7 +115,7 @@
           // ✅ blocco fuori raggio
           if (distKm > maxDistance) {
             showError(
-              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>" +
+              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 30 metri).</h2>" +
               "<p>Distanza stimata: <b>" + distMeters + " m</b></p>" +
               "<p>Precisione GPS: <b>" + Math.round(accuracy) + " m</b></p>"
             );
