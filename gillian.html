@@ -14,10 +14,10 @@
     // Coordinate della postazione (Gillian)
     const workLat = 45.58231;
     const workLon = 10.52236;
-    const maxDistance = 0.02; // 20 metri (in km)
+    const maxDistance = 0.03; // 20 metri (in km)
 
     // ✅ blocco se precisione GPS peggiore di 20m
-    const maxAccuracyMeters = 20;
+    const maxAccuracyMeters = 30;
 
     // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
