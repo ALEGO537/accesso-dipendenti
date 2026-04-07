@@ -12,12 +12,12 @@
     const TOKEN_ENTRY_ID = "1120073114";
 
     // Coordinate della postazione (Zoraima)
-    const workLat = 45.58228;
-    const workLon = 10.52226;
-    const maxDistance = 0.02; // 20 metri (in km)
+    const workLat = 45.582256;
+    const workLon = 10.522352;
+    const maxDistance = 0.03; // 30 metri (in km)
 
-    // ✅ blocco se precisione GPS peggiore di 15m
-    const maxAccuracyMeters = 20;
+    // ✅ blocco se precisione GPS peggiore di 30
+    const maxAccuracyMeters = 30;
 
     // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
@@ -115,7 +115,7 @@
           // ✅ blocco fuori raggio
           if (distKm > maxDistance) {
             showError(
-              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>" +
+              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 30 metri).</h2>" +
               "<p>Distanza stimata: <b>" + distMeters + " m</b></p>" +
               "<p>Precisione GPS: <b>" + Math.round(accuracy) + " m</b></p>"
             );
