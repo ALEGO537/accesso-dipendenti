@@ -14,10 +14,10 @@
     // Coordinate della postazione (Luca)
     const workLat = 45.582193;
     const workLon = 10.522047;
-    const maxDistance = 0.02; // 20 metri (in km)
+    const maxDistance = 0.04; // 40 metri (in km)
 
-    // ✅ blocco se precisione GPS peggiore di 20m
-    const maxAccuracyMeters = 20;
+    // ✅ blocco se precisione GPS peggiore di 40m
+    const maxAccuracyMeters = 40;
 
     // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
