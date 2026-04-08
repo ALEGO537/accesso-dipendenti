@@ -14,10 +14,10 @@
     // Coordinate della postazione (Alberto)
     const workLat = 45.582314;
     const workLon = 10.522671;
-    const maxDistance = 0.03; // 30 metri (in km)
+    const maxDistance = 0.05; // 50 metri (in km)
 
     // ✅ blocco se precisione GPS peggiore di 30m
-    const maxAccuracyMeters = 30;
+    const maxAccuracyMeters = 50;
 
     // Calcolo distanza GPS (km)
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
@@ -115,7 +115,7 @@
           // ✅ blocco fuori raggio
           if (distKm > maxDistance) {
             showError(
-              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 30 metri).</h2>" +
+              "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 50 metri).</h2>" +
               "<p>Distanza stimata: <b>" + distMeters + " m</b></p>" +
               "<p>Precisione GPS: <b>" + Math.round(accuracy) + " m</b></p>"
             );
