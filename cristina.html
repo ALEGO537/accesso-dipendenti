@@ -2,37 +2,61 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accesso modulo dipendenti - Cristina Pozzi</title>
 
   <script>
+    // =========================
+    // CONFIGURAZIONE DIPENDENTE
+    // =========================
+    const EMPLOYEE_NAME = "Cristina Pozzi";
+    const EMPLOYEE_EMAIL = "cristinapozzi.pr@gmail.com";
+    const EMPLOYEE_PAGE = "cristina";
+
     // ✅ URL WebApp TOKEN (Apps Script)
     const TOKEN_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbym36zEkEVAmTztmGhp_3ynvgFKY6SqDL7hAOOY_0PO0x55W8sh2Ulv9q-I5SGVd2fQ/exec";
+
+    // ✅ Chiave segreta da controllare anche lato Apps Script
+    const SECRET_KEY = "CRISTINA_2026";
 
     // ✅ Campo TOKEN del Google Form
     const TOKEN_ENTRY_ID = "1948388486";
 
-    // Coordinate della postazione (Cristina)
+    // ✅ URL Google Form
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform";
+
+    // ✅ Entry ID Google Form
+    const ENTRY_NAME = "1442131990";
+    const ENTRY_EMAIL = "1644042605";
+    const ENTRY_COORDS = "1650758087";
+    const ENTRY_TIMESTAMP = "1485992978";
+
+    // =========================
+    // CONFIGURAZIONE GEOLOCAL.
+    // =========================
     const workLat = 45.58228;
     const workLon = 10.52226;
-    const maxDistance = 0.02; // 20 metri (in km)
+    const maxDistanceKm = 0.02;   // 20 metri
+    const maxAccuracyMeters = 20; // precisione massima consentita
 
-    // ✅ blocco se precisione GPS peggiore di 15m
-    const maxAccuracyMeters = 20;
-
-    // Calcolo distanza GPS (km)
+    // =========================
+    // UTILITY
+    // =========================
     function getDistanceFromLatLon(lat1, lon1, lat2, lon2) {
-      const R = 6371;
+      const R = 6371; // km
       const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
+
       const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     }
 
-    // Controllo dispositivo mobile
     function isMobileDevice() {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
@@ -47,40 +71,57 @@
       const now = new Date();
       return (
         now.getFullYear() + "-" +
-        String(now.getMonth() + 1).padStart(2, '0') + "-" +
-        String(now.getDate()).padStart(2, '0') + " " +
-        String(now.getHours()).padStart(2, '0') + ":" +
-        String(now.getMinutes()).padStart(2, '0') + ":" +
-        String(now.getSeconds()).padStart(2, '0')
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0") + " " +
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0") + ":" +
+        String(now.getSeconds()).padStart(2, "0")
       );
     }
 
-    // Richiede token monouso alla WebApp
-    function requestToken(name, email, page) {
-      return fetch(TOKEN_WEBAPP_URL, {
+    // =========================
+    // RICHIESTA TOKEN
+    // =========================
+    async function requestToken(name, email, page) {
+      const response = await fetch(TOKEN_WEBAPP_URL, {
         method: "POST",
-        body: JSON.stringify({ name, email, page })
-      }).then(r => r.json());
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          page,
+          key: SECRET_KEY
+        })
+      });
+
+      return response.json();
     }
 
-    // Apre Google Form con token precompilato
+    // =========================
+    // APERTURA FORM
+    // =========================
     function openForm(lat, lon, italianTimestamp, token) {
       const coordVal = encodeURIComponent(lat.toFixed(5) + ", " + lon.toFixed(5));
       const timestampVal = encodeURIComponent(italianTimestamp);
       const tokenVal = encodeURIComponent(token);
 
       const formURL =
-        "https://docs.google.com/forms/d/e/1FAIpQLSeEqZ2OHgHk1QtCB4wVyDfG397uEfxTv2_kgz9hYsk6_9InZw/viewform" +
+        GOOGLE_FORM_URL +
         "?usp=pp_url" +
-        "&entry.1442131990=Cristina+Pozzi" +
-        "&entry.1644042605=cristinapozzi.pr@gmail.com" +
-        "&entry.1650758087=" + coordVal +
-        "&entry.1485992978=" + timestampVal +
+        "&entry." + ENTRY_NAME + "=" + encodeURIComponent(EMPLOYEE_NAME) +
+        "&entry." + ENTRY_EMAIL + "=" + encodeURIComponent(EMPLOYEE_EMAIL) +
+        "&entry." + ENTRY_COORDS + "=" + coordVal +
+        "&entry." + ENTRY_TIMESTAMP + "=" + timestampVal +
         "&entry." + TOKEN_ENTRY_ID + "=" + tokenVal;
 
       window.location.href = formURL;
     }
 
+    // =========================
+    // AVVIO
+    // =========================
     window.onload = function () {
       if (!isMobileDevice()) {
         showError("<h2 style='color:red;'>Accesso consentito solo da dispositivi mobili.</h2>");
@@ -92,15 +133,15 @@
         return;
       }
 
-      document.body.innerHTML = "<p>Verifico la posizione GPS…</p>";
+      document.body.innerHTML = "<p>Verifico il dispositivo e la posizione GPS…</p>";
 
       navigator.geolocation.getCurrentPosition(
-        function (pos) {
+        async function (pos) {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          const accuracy = pos.coords.accuracy; // metri
+          const accuracy = pos.coords.accuracy;
 
-          // ✅ blocco accuracy alta
+          // blocco precisione scarsa
           if (typeof accuracy === "number" && accuracy > maxAccuracyMeters) {
             showError(
               "<h2 style='color:red;'>Posizione troppo imprecisa (" + Math.round(accuracy) + " m).</h2>" +
@@ -112,8 +153,8 @@
           const distKm = getDistanceFromLatLon(lat, lon, workLat, workLon);
           const distMeters = Math.round(distKm * 1000);
 
-          // ✅ blocco fuori raggio
-          if (distKm > maxDistance) {
+          // blocco fuori raggio
+          if (distKm > maxDistanceKm) {
             showError(
               "<h2 style='color:red;'>Vidimazione consentita solo sul luogo di lavoro (entro 20 metri).</h2>" +
               "<p>Distanza stimata: <b>" + distMeters + " m</b></p>" +
@@ -122,28 +163,39 @@
             return;
           }
 
-          // ✅ passed: genera token e apre il form
           const italianTimestamp = makeItalianTimestamp();
 
-          requestToken("Cristina Pozzi", "cristinapozzi.pr@gmail.com", "cristina")
-            .then(res => {
-              if (!res || !res.ok || !res.token) {
-                showError("<h2 style='color:red;'>Accesso negato: token non disponibile.</h2><p>Riprova.</p>");
-                return;
-              }
-              openForm(lat, lon, italianTimestamp, res.token);
-            })
-            .catch(() => {
-              showError("<h2 style='color:red;'>Errore di connessione (token).</h2><p>Riprova.</p>");
-            });
+          try {
+            const res = await requestToken(EMPLOYEE_NAME, EMPLOYEE_EMAIL, EMPLOYEE_PAGE);
+
+            if (!res || !res.ok || !res.token) {
+              const reason = res && res.reason ? " (" + res.reason + ")" : "";
+              showError(
+                "<h2 style='color:red;'>Accesso negato: token non disponibile" + reason + ".</h2>" +
+                "<p>Riprova.</p>"
+              );
+              return;
+            }
+
+            openForm(lat, lon, italianTimestamp, res.token);
+
+          } catch (err) {
+            showError(
+              "<h2 style='color:red;'>Errore di connessione durante la richiesta del token.</h2>" +
+              "<p>Controlla la connessione e riprova.</p>"
+            );
+          }
         },
         function () {
-          showError("<h2 style='color:red;'>Impossibile ottenere la posizione GPS.<br>Controlla le autorizzazioni e riprova.</h2>");
+          showError(
+            "<h2 style='color:red;'>Impossibile ottenere la posizione GPS.</h2>" +
+            "<p>Controlla le autorizzazioni di localizzazione e riprova.</p>"
+          );
         },
         {
           enableHighAccuracy: true,
           timeout: 15000,
-          maximumAge: 0 // ✅ azzera posizione cached
+          maximumAge: 0
         }
       );
     };
@@ -154,4 +206,3 @@
   <p>Verifico il dispositivo e la posizione…</p>
 </body>
 </html>
-
